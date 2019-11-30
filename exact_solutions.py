@@ -70,7 +70,7 @@ def elastic_solver_free():
     #EXACT SOUTION ELASTIC
     ###############################################
 
-    Initial_parameters=Parameters("/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-elastic/input-version-exact-elastic-1")
+    Initial_parameters=Parameters("./Exact-elastic/input-version-exact-elastic-1")
     Initial_parameters.calc_parameters()
     Initial_parameters.wave_num_and_range()
     Initial_parameters.velo_prof()
@@ -101,7 +101,7 @@ def elastic_solver_free():
 
 
 
-    Initial_parameters=Parameters("/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-elastic/input-version-exact-elastic-2")
+    Initial_parameters=Parameters("./Exact-elastic/input-version-exact-elastic-2")
     Initial_parameters.calc_parameters()
     Initial_parameters.wave_num_and_range()
     Initial_parameters.velo_prof()
@@ -157,7 +157,7 @@ def acoustic_solver_toy():
     ###############################################
     #EXACT SOUTION N^2 PROFILE
     ###############################################
-    Initial_parameters=Parameters("/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Toy/input-version-exact-toy")
+    Initial_parameters=Parameters("./Toy/input-version-exact-toy")
     Initial_parameters.calc_parameters()
     Initial_parameters.wave_num_and_range()
     Initial_parameters.velo_prof()
@@ -192,7 +192,7 @@ def acoustic_solver_toy():
                 Initial_parameters.rho,Initial_parameters.omega,Initial_parameters.eps)
 
 
-    parameters=np.loadtxt('/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Toy/tloss_1d.effc.ll.nm')
+    parameters=np.loadtxt('./Toy/tloss_1d.effc.ll.nm')
     l=len(parameters)
     Jelle_tl=np.ndarray(l,dtype=np.float32)
     Jelle_range=np.ndarray(l,dtype=np.float32)
@@ -217,7 +217,7 @@ def acoustic_solver_N2():
     ###############################################
     #EXACT SOUTION N^2 PROFILE
     ###############################################
-    Initial_parameters=Parameters("/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-N2/input-version-exact-N2")
+    Initial_parameters=Parameters("./Exact-N2/input-version-exact-N2")
     Initial_parameters.calc_parameters()
     Initial_parameters.wave_num_and_range()
     Initial_parameters.velo_prof()
@@ -246,8 +246,8 @@ def acoustic_solver_N2():
                 Initial_parameters.rho,Initial_parameters.omega,Initial_parameters.eps)
 
 
-    n2_tl=np.loadtxt('/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-N2/N2_TL.txt')
-    n2_range=np.loadtxt('/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-N2/N2_range.txt')
+    n2_tl=np.loadtxt('./Exact-N2/N2_TL.txt')
+    n2_range=np.loadtxt('./Exact-N2/N2_range.txt')
 
     pos=0
     plt.figure(figsize=(20,10))
@@ -261,7 +261,7 @@ def acoustic_solver_N2():
 #--------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------
 def acoustic_solver_rigid():
-    Initial_parameters=Parameters("/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-acoustic-rigid/input-version-exact-acoustic-rigid")
+    Initial_parameters=Parameters("./Exact-acoustic-rigid/input-version-exact-acoustic-rigid")
     Initial_parameters.calc_parameters()
     Initial_parameters.wave_num_and_range()
     Initial_parameters.velo_prof()
@@ -315,7 +315,7 @@ def acoustic_solver_rigid():
 
 
 def acoustic_solver_free():
-    Initial_parameters=Parameters("/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/Exact-acoustic-free/input-version-exact-acoustic-free")
+    Initial_parameters=Parameters("./Exact-acoustic-free/input-version-exact-acoustic-free")
     Initial_parameters.calc_parameters()
     Initial_parameters.wave_num_and_range()
     Initial_parameters.velo_prof()
