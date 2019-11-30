@@ -1,0 +1,3 @@
+# SA_FFP
+seismo-acoustic Fast Field Program for coupled elastic acoustic wave propagation
+Detaied instructions will follow...
