@@ -14,8 +14,8 @@ from obspy import Trace, Stream, UTCDateTime
 def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
 
-    loc_i='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'
-    loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'+Fname
+    loc_i='./'
+    loc_f='./'+Fname
     
     if os.path.isdir(loc_f)==True:
         print('directory exist. removing and recreating')
@@ -70,8 +70,8 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
     #st.write("waveforms", format='sac')
 
-    loc_i='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'
-    loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'+Fname
+    loc_i='./'
+    loc_f='./'+Fname
 
     for file in glob.glob(loc_i+'waveforms*'):
         shutil.move(file, loc_f)
@@ -172,8 +172,8 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     # loc_i='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'
     # loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'+Fname
 
-    loc_i='/Users/gil/Dropbox/study/FFP/seismo-acoustic/Haiti/'
-    loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/Haiti/'+Fname
+    loc_i='./'
+    loc_f='./'+Fname
     
     if os.path.isdir(loc_f)==True:
         print('directory exist. removing and recreating')
@@ -184,7 +184,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         os.mkdir(loc_f)
 
     loc_f=loc_f+'/'
-    shutil.copy(loc_i+'/input-Haiti', loc_f+'/input-Haiti')
+    shutil.copy(loc_i+'/input-nb', loc_f+'/input-nb')
 
     pos_0= earth_interface + ocean_interface
     phases=np.zeros(wavenumbers, dtype=np.float64)

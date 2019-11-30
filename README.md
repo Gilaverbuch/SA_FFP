@@ -1,8 +1,10 @@
 # SA_FFP
 seismo-acoustic Fast Field Program for coupled elastic acoustic wave propagation
 
+Remove new directories before commiting and pushing. The results directories are too large for github.
 
-Specifications:
+
+Specifications for input file:
 
 1. MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!
 

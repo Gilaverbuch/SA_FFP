@@ -75,17 +75,11 @@ def solve_narrowband(Initial_parameters):
         t1 = time.time()
         print (t1-t0)
 
-        # save_results(A_p, P, Initial_parameters.z, Initial_parameters.r, Initial_parameters.omega, Initial_parameters.Vp,
-        #             Initial_parameters.K, Initial_parameters.earth_interface, Initial_parameters.Earth_depth, Initial_parameters.ocean_interface, 
-        #             Initial_parameters.Ocean_depth, smooth_window, Initial_parameters.wavenumbers,
-        #             Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt)
-
-
-        save_results_inversion(A_p, P, Initial_parameters.z, Initial_parameters.r, Initial_parameters.omega, 
+        save_results(A_p, P, Initial_parameters.z, Initial_parameters.r, Initial_parameters.omega, Initial_parameters.Vp,
                     Initial_parameters.K, Initial_parameters.earth_interface, Initial_parameters.Earth_depth, Initial_parameters.ocean_interface, 
                     Initial_parameters.Ocean_depth, smooth_window, Initial_parameters.wavenumbers,
-                    Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt, 
-                    Initial_parameters.S_depth, Initial_parameters.frequency1, Initial_parameters.direction)
+                    Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt)
+
 
 
 
