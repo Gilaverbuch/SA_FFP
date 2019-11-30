@@ -1,7 +1,7 @@
 Simulation      type=narrowband
-Frequency       f=50                                
+Frequency       f=0.5                                
 dz              dz=50
-Wavenumbers     n=8192
+Wavenumbers     n=4096
 Source          S_medium=ocean                     S_depth=1001       S_type=source           
 BC-top          bc=radiation                          
 BC-bottom       bc=radiation                           
