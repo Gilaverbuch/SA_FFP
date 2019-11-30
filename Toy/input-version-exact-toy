@@ -1,5 +1,5 @@
 Frequency       f=0.5                                
-dz              dz=50
+dz              dz=20
 Wavenumbers     n=4096   
 Source          S_medium=atm         S_depth=5001       S_type=source           
 BC-top          bc=rigid                          
@@ -8,7 +8,7 @@ File-name       name=toy          type=toy
 C               Cmin=300                Cmax=600                            
 Earth           type=non            depth=600        Attenuation=off        
 Ocean           type=non                depth=0                           
-Atm             ATM_type=/Users/gil/Dropbox/study/FFP/seismo-acoustic/Toy/soundspeed_east_strat.dat           depth=140000     direction=90 
+Atm             ATM_type=./Toy/soundspeed_east_strat.dat           depth=140000     direction=90 
 
 # Specifications:
 # 1.MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!
