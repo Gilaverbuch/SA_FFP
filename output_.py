@@ -15,7 +15,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
 
     loc_i='./'
-    loc_f='./'+Fname
+    loc_f='./Results/'+Fname
     
     if os.path.isdir(loc_f)==True:
         print('directory exist. removing and recreating')
@@ -71,7 +71,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
     #st.write("waveforms", format='sac')
 
     loc_i='./'
-    loc_f='./'+Fname
+    loc_f='./Results/'+Fname
 
     for file in glob.glob(loc_i+'waveforms*'):
         shutil.move(file, loc_f)
@@ -173,7 +173,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     # loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'+Fname
 
     loc_i='./'
-    loc_f='./'+Fname
+    loc_f='./Results/'+Fname
     
     if os.path.isdir(loc_f)==True:
         print('directory exist. removing and recreating')
