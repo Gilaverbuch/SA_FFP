@@ -1,6 +1,7 @@
 ###> ignore python folders ###
 /*.egg-info
 __pycache__
+.ipynb_checkpoints
 ###< ignore python folders ###
 
 
