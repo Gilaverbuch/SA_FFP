@@ -165,7 +165,8 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
 
 
-def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth, smooth_window, wavenumbers, layers, dz, Fname, Rec_alt):
+def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth, 
+                    smooth_window, wavenumbers, layers, dz, Fname, Rec_alt, rho, S_medium, S_depth):
     #this function gets the Green's functions and pressure, and saves the P, TL and modes for a given altitude alt
     #P and TL are as function of range. Modes are function of phase velocity.
 
@@ -184,14 +185,30 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         os.mkdir(loc_f)
 
     loc_f=loc_f+'/'
-    shutil.copy(loc_i+'/input-nb', loc_f+'/input-nb')
+    shutil.copy(loc_i+'/input-parameters', loc_f+'/input-parameters')
 
     pos_0= earth_interface + ocean_interface
+
+    if S_medium=='earth':
+        S_layer=earth_interface - int(S_depth/dz)-1
+        
+        P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
+
+    elif S_medium=='ocean':
+        S_layer=earth_interface + int((Ocean_depth - S_depth)/dz)
+        
+        P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
+
+    elif S_medium=='atm':
+        S_depth=Atm_depth-S_depth
+        
+        P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
+
     phases=np.zeros(wavenumbers, dtype=np.float64)
     for i in range(1,wavenumbers):
         phases[i]=omega/np.real(K[i])
 
-    P_null= 1*(omega**2)*np.exp(1j * omega/330)/(4*pi)
+    
 
     for alt in Rec_alt:
 
@@ -207,15 +224,32 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         
         with open(TL_name, 'w') as f:
             writer = csv.writer(f, delimiter='\t')
-            writer.writerows(zip(r/1000,20*np.log10(np.abs(P[pos,:])/(np.abs(P[pos,0])))))
+            a1 =  np.abs(P[pos,:])/(rho[pos]*Vp[pos])
+            a2 =  np.abs(P_null)/(rho[S_layer]*Vp[S_layer])
+            writer.writerows(zip(r/1000,20*np.log10(a1/a2)))
+        print (rho[pos] , Vp[pos])
+        print (rho[S_layer] , Vp[S_layer])
+
+
+        plt.figure(figsize=[15,5])
+        plt.plot(r/1000,20*np.log10(a1/a2))
+        plt.xlim([0,1000])
+        plt.show()
 
         with open(P_name, 'w') as f:
             writer = csv.writer(f, delimiter='\t')
             writer.writerows(zip(r/1000,np.abs(P[pos,:])))
 
+
+
         with open(Modes_name, 'w') as f:
             writer = csv.writer(f, delimiter='\t')
             writer.writerows(zip(phases,np.abs(A[pos,:])*smooth_window[:wavenumbers]))
+
+        plt.figure(figsize=[15,5])
+        plt.plot(phases,np.abs(A[pos,:])*smooth_window[:wavenumbers])
+        plt.xlim([330,380])
+        plt.show()
 
 
 
@@ -230,10 +264,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     os.rename(loc_i+vel_name, loc_f+vel_name)
 
-    plt.figure(figsize=[15,5])
-    plt.plot(r/1000,20*np.log10(np.abs(P[pos,:])/(np.abs(P[pos,0]))))
-    plt.xlim([0,1000])
-    plt.show()
+    
 
     ncfile = Dataset(U_name, 'w', format='NETCDF4_CLASSIC')
 
@@ -255,21 +286,20 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     z_var.setncatts(z_atts)
     Uzz_var.setncatts(Uzz_atts)
 
-    # Uzz_var[:] = 20*np.log10(np.abs(P[:,:])/(4*pi))
 
-    # print (Uzz_var[:])
-    displacement=20*np.log10(np.abs(P[:,:])/(np.abs(P[pos,0])))
+    displacement = P
+    a2 =  np.abs(P_null)/(rho[S_layer]*Vp[S_layer])
+    for l in range(0, layers):
+        a1 =  np.abs(P[l,:])/(rho[l]*Vp[l])
+        displacement[l,:]=20*np.log10(a1/a2)
+
+
     displacement=np.real(displacement)
-    # displacement[displacement==-np.inf] = -2000
-    # displacement[displacement==np.inf] = -2000
-    # displacement[displacement==np.nan] = -2000
+
     displacement[np.isposinf(displacement)] = -2000
     displacement[np.isneginf(displacement)] = -2000
     displacement[np.isnan(displacement)] = -2000
-    # for i in range(0,layers):
-    #     for j in range(0,wavenumbers):
-    #         if displacement[i,j] in [-np.inf, np.inf]:
-    #             displacement[i,j]=-1000
+
 
 
     r_var[:] = r/1000
