@@ -78,7 +78,8 @@ def solve_narrowband(Initial_parameters):
         save_results(A_p, P, Initial_parameters.z, Initial_parameters.r, Initial_parameters.omega, Initial_parameters.Vp,
                     Initial_parameters.K, Initial_parameters.earth_interface, Initial_parameters.Earth_depth, Initial_parameters.ocean_interface, 
                     Initial_parameters.Ocean_depth, smooth_window, Initial_parameters.wavenumbers,
-                    Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt)
+                    Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt, 
+                    Initial_parameters.rho, Initial_parameters.S_medium, Initial_parameters.S_depth)
 
 
 
@@ -109,5 +110,6 @@ def solve_narrowband(Initial_parameters):
         save_results(A, P, Initial_parameters.z, Initial_parameters.r, Initial_parameters.omega, Initial_parameters.Vp,
                     Initial_parameters.K, Initial_parameters.earth_interface, Initial_parameters.Earth_depth, Initial_parameters.ocean_interface, 
                     Initial_parameters.Ocean_depth, smooth_window, Initial_parameters.wavenumbers,
-                    Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt)
+                    Initial_parameters.layers, Initial_parameters.dz, Initial_parameters.Fname, Initial_parameters.Rec_alt,
+                    Initial_parameters.rho, Initial_parameters.S_medium, Initial_parameters.S_depth)
 
