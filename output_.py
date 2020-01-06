@@ -202,7 +202,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     elif S_medium=='atm':
         S_depth=Atm_depth-S_depth
         
-        P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
+        P_null= -rho[S_layer]*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
     phases=np.zeros(wavenumbers, dtype=np.float64)
     for i in range(1,wavenumbers):

@@ -1,12 +1,12 @@
 Simulation      type=narrowband
-Frequency       f=0.5                                
+Frequency       f=50                                
 dz              dz=50
-Wavenumbers     n=4096
-Source          S_medium=ocean                     S_depth=501       S_type=source           
+Wavenumbers     n=8192
+Source          S_medium=ocean                     S_depth=1001       S_type=source           
 BC-top          bc=radiation                          
 BC-bottom       bc=radiation                           
-File-name       name=acoustic                        type=acoustic
-C               Cmin=300                            Cmax=400                            
+File-name       name=sofar                        type=acoustic
+C               Cmin=1500                            Cmax=1550                            
 Earth           type=non                    depth=5000   Attenuation=off             
 Ocean           type=munk                   depth=5000                           
 Atm             ATM_type=soundspeed_east_strat.dat      depth=70000     direction=90
