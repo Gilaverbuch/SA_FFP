@@ -200,7 +200,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
     elif S_medium=='atm':
-        S_depth=Atm_depth-S_depth
+        S_layer=earth_interface + ocean_interface + int(S_depth/dz)
         
         P_null= -rho[S_layer]*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
@@ -224,8 +224,12 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         
         with open(TL_name, 'w') as f:
             writer = csv.writer(f, delimiter='\t')
-            a1 =  np.abs(P[pos,:])/(rho[pos]*Vp[pos])
-            a2 =  np.abs(P_null)/(rho[S_layer]*Vp[S_layer])
+            a1 =  np.abs(P[pos,:])/np.sqrt(rho[pos]*Vp[pos])
+            a2 =  np.abs(P_null)/np.sqrt(rho[S_layer]*Vp[S_layer])
+
+            # a1 =  np.abs(P[pos,:])/(np.sqrt(rho[pos]))
+            # a2 =  np.abs(P_null)/(np.sqrt(rho[S_layer]))
+
             writer.writerows(zip(r/1000,20*np.log10(a1/a2)))
         print (rho[pos] , Vp[pos])
         print (rho[S_layer] , Vp[S_layer])
@@ -288,9 +292,11 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
 
     displacement = P
-    a2 =  np.abs(P_null)/(rho[S_layer]*Vp[S_layer])
+    # a2 =  np.abs(P_null)/(rho[S_layer]*Vp[S_layer])
+    a2 =  np.abs(P_null)/(np.sqrt(rho[S_layer]))
     for l in range(0, layers):
-        a1 =  np.abs(P[l,:])/(rho[l]*Vp[l])
+        a1 =  np.abs(P[l,:])/np.sqrt(rho[l]*Vp[l])
+        # a1 =  np.abs(P[l,:])/(np.sqrt(rho[l]))
         displacement[l,:]=20*np.log10(a1/a2)
 
 
