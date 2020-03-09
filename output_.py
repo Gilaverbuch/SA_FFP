@@ -192,7 +192,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     if S_medium=='earth':
         S_layer=earth_interface - int(S_depth/dz)-1
         
-        P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
+        P_null= rho[S_layer]*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
     elif S_medium=='ocean':
         S_layer=earth_interface + int((Ocean_depth - S_depth)/dz)
@@ -219,7 +219,10 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         TL_name='TL_alt_'+str(alt)+'.csv'
         P_name='abs-pressure_alt_'+str(alt)+'.csv'
         Modes_name='modes_alt_'+str(alt)+'.csv'
-        U_name='Uzz.nc'
+        U_name1='TL_intensity_ref_source.nc'
+        U_name2='Red_Pressure_ref_source.nc'
+        U_name3='TL_intensity_ref_reciever.nc'
+        U_name4='Abs_pressure.nc'
 
         
         with open(TL_name, 'w') as f:
@@ -227,18 +230,17 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
             a1 =  np.abs(P[pos,:])/np.sqrt(rho[pos]*Vp[pos])
             a2 =  np.abs(P_null)/np.sqrt(rho[S_layer]*Vp[S_layer])
 
-            # a1 =  np.abs(P[pos,:])/(np.sqrt(rho[pos]))
-            # a2 =  np.abs(P_null)/(np.sqrt(rho[S_layer]))
-
             writer.writerows(zip(r/1000,20*np.log10(a1/a2)))
-        print (rho[pos] , Vp[pos])
-        print (rho[S_layer] , Vp[S_layer])
+
+
+
 
 
         plt.figure(figsize=[15,5])
         plt.plot(r/1000,20*np.log10(a1/a2))
         plt.xlim([0,1000])
         plt.show()
+
 
         with open(P_name, 'w') as f:
             writer = csv.writer(f, delimiter='\t')
@@ -252,7 +254,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
         plt.figure(figsize=[15,5])
         plt.plot(phases,np.abs(A[pos,:])*smooth_window[:wavenumbers])
-        plt.xlim([330,380])
+        plt.xlim([300,500])
         plt.show()
 
 
@@ -268,9 +270,17 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     os.rename(loc_i+vel_name, loc_f+vel_name)
 
-    
+    dens_name='rho.csv'
+    with open(dens_name, 'w') as f:
+            writer = csv.writer(f, delimiter='\t')
+            writer.writerows(zip(z/1000, rho))
 
-    ncfile = Dataset(U_name, 'w', format='NETCDF4_CLASSIC')
+    os.rename(loc_i+dens_name, loc_f+dens_name)
+
+    # ----------------------------------------------------------------------------------------
+    # TL wave intensity ref source
+    # ----------------------------------------------------------------------------------------
+    ncfile = Dataset(U_name1, 'w', format='NETCDF4_CLASSIC')
 
     Uzz_atts = {'units': 'diss', 'long_name':   'Transmission Loss'}
     z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
@@ -291,12 +301,13 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     Uzz_var.setncatts(Uzz_atts)
 
 
-    displacement = P
-    # a2 =  np.abs(P_null)/(rho[S_layer]*Vp[S_layer])
-    a2 =  np.abs(P_null)/(np.sqrt(rho[S_layer]))
+    displacement = P.copy()
+
+    a2 = np.abs(P_null)/np.sqrt(rho[S_layer]*Vp[S_layer])
     for l in range(0, layers):
+
         a1 =  np.abs(P[l,:])/np.sqrt(rho[l]*Vp[l])
-        # a1 =  np.abs(P[l,:])/(np.sqrt(rho[l]))
+
         displacement[l,:]=20*np.log10(a1/a2)
 
 
@@ -315,10 +326,165 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     ncfile.close()
 
     
+    os.rename(loc_i+U_name1, loc_f+U_name1)
+    # ----------------------------------------------------------------------------------------
+
+
+    # ----------------------------------------------------------------------------------------
+    # TL reduced pressure ref source
+    # ----------------------------------------------------------------------------------------
+    # ncfile = Dataset(U_name2, 'w', format='NETCDF4_CLASSIC')
+
+    # Uzz_atts = {'units': 'diss', 'long_name':   'Transmission Loss'}
+    # z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
+    # r_atts = {'units': 'km', 'long_name':   'Range'}
+
+    # # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
+
+    # ncfile.createDimension('z', layers)
+    # ncfile.createDimension('r', wavenumbers)
+
+
+    # r_var = ncfile.createVariable('r', np.float64, ('r',))
+    # z_var = ncfile.createVariable('z', np.float64, ('z',))
+    # Uzz_var = ncfile.createVariable('diss', np.float64, ('z','r', ))
+
+    # r_var.setncatts(r_atts)
+    # z_var.setncatts(z_atts)
+    # Uzz_var.setncatts(Uzz_atts)
+
+
+    # displacement = P.copy()
+
+    # a2 =  np.abs(P_null)/(np.sqrt(rho[S_layer]))
+    # for l in range(0, layers):
+    #     a1 =  np.abs(P[l,:])/np.sqrt(rho[l])
+    #     displacement[l,:]=np.log10(a1/a2)
+
+
+    # displacement=np.real(displacement)
+
+    # displacement[np.isposinf(displacement)] = -2000
+    # displacement[np.isneginf(displacement)] = -2000
+    # displacement[np.isnan(displacement)] = -2000
+
+
+
+    # r_var[:] = r/1000
+    # z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
+    # Uzz_var[:] = displacement
+
+    # ncfile.close()
 
     
-    os.rename(loc_i+U_name, loc_f+U_name)
+    # os.rename(loc_i+U_name2, loc_f+U_name2)
+    # ----------------------------------------------------------------------------------------
 
+
+    # ----------------------------------------------------------------------------------------
+    # TL wave intensity ref reciever
+    # ----------------------------------------------------------------------------------------
+    # ncfile = Dataset(U_name3, 'w', format='NETCDF4_CLASSIC')
+
+    # Uzz_atts = {'units': 'diss', 'long_name':   'Transmission Loss'}
+    # z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
+    # r_atts = {'units': 'km', 'long_name':   'Range'}
+
+    # # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
+
+    # ncfile.createDimension('z', layers)
+    # ncfile.createDimension('r', wavenumbers)
+
+
+    # r_var = ncfile.createVariable('r', np.float64, ('r',))
+    # z_var = ncfile.createVariable('z', np.float64, ('z',))
+    # Uzz_var = ncfile.createVariable('diss', np.float64, ('z','r', ))
+
+    # r_var.setncatts(r_atts)
+    # z_var.setncatts(z_atts)
+    # Uzz_var.setncatts(Uzz_atts)
+
+
+    # displacement = P.copy()
+
+    # a2 = np.abs(P[pos,0])/np.sqrt(rho[pos]*Vp[pos])
+    # print(a2, pos, P.min(), P.max(), P.mean())
+    # for l in range(0, layers):
+
+    #     a1 =  np.abs(P[l,:])/np.sqrt(rho[l]*Vp[l])
+
+    #     displacement[l,:]=20*np.log10(a1/a2)
+
+
+    # displacement=np.real(displacement)
+
+    # displacement[np.isposinf(displacement)] = -2000
+    # displacement[np.isneginf(displacement)] = -2000
+    # displacement[np.isnan(displacement)] = -2000
+
+
+
+    # r_var[:] = r/1000
+    # z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
+    # Uzz_var[:] = displacement
+
+    # ncfile.close()
+
+    
+    # os.rename(loc_i+U_name3, loc_f+U_name3)
+    # ----------------------------------------------------------------------------------------
+
+
+    # ----------------------------------------------------------------------------------------
+    # Absolute pressure
+    # ----------------------------------------------------------------------------------------
+    ncfile = Dataset(U_name4, 'w', format='NETCDF4_CLASSIC')
+
+    Uzz_atts = {'units': 'Pa', 'long_name':   'Absolute pressure'}
+    z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
+    r_atts = {'units': 'km', 'long_name':   'Range'}
+
+    # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
+
+    ncfile.createDimension('z', layers)
+    ncfile.createDimension('r', wavenumbers)
+
+
+    r_var = ncfile.createVariable('r', np.float64, ('r',))
+    z_var = ncfile.createVariable('z', np.float64, ('z',))
+    Uzz_var = ncfile.createVariable('P_abs', np.float64, ('z','r', ))
+
+    r_var.setncatts(r_atts)
+    z_var.setncatts(z_atts)
+    Uzz_var.setncatts(Uzz_atts)
+
+
+    displacement = P.copy()
+
+    for l in range(0, layers):
+
+        a1 =  np.abs(P[l,:])#/np.sqrt(rho[l]*Vp[l])
+
+        displacement[l,:]=a1
+
+
+    displacement=np.real(displacement)
+
+    displacement[np.isposinf(displacement)] = -2000
+    displacement[np.isneginf(displacement)] = -2000
+    displacement[np.isnan(displacement)] = -2000
+
+
+
+    r_var[:] = r/1000
+    z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
+    Uzz_var[:] = displacement
+
+    ncfile.close()
+
+    
+    os.rename(loc_i+U_name4, loc_f+U_name4)
+    # ----------------------------------------------------------------------------------------
 
 
 

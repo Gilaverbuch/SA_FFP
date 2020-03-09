@@ -1,15 +1,15 @@
 Simulation      type=narrowband
-Frequency       f=0.5                                
+Frequency       f=0.8                                
 dz              dz=20
 Wavenumbers     n=4096
-Source          S_medium=earth                     S_depth=10001       S_type=source           
+Source          S_medium=ocean                     S_depth=1001       S_type=source           
 BC-top          bc=radiation                          
 BC-bottom       bc=radiation                           
-File-name       name=Haiti                        type=acoustic
-C               Cmin=280                            Cmax=500                            
-Earth           type=./Results/Haiti-profiles/HAiti_elastic_profile                    depth=15000   Attenuation=off             
-Ocean           type=non                   depth=5000                           
-Atm             ATM_type=./Results/Haiti-profiles/Haiti_profile      depth=150000     direction=26
+File-name       name=atmosphere_Sz1000_f08hz                        type=acoustic
+C               Cmin=300                            Cmax=450                            
+Earth           type=non                    depth=5000   Attenuation=off             
+Ocean           type=munk                   depth=5000                           
+Atm             ATM_type=soundspeed_east_strat.dat      depth=70000     direction=90
 Receiver        Rec_alt=1000
 
 
