@@ -590,7 +590,7 @@ def read_atm_profile(profile_name,atm_depth,dz,direction):
         alt[i]=parameters[i,0]
         wind_zonal[i]=parameters[i,1]
         wind_merid[i]=parameters[i,2]
-        vel_adia[i]=20.05 * np.sqrt(parameters[i,4]) # 331.3+0.66*(parameters[i,4]-273.15)
+        vel_adia[i]=20.05 * np.sqrt(parameters[i,4]) 
         rho[i]=parameters[i,5]*1000
 
 
