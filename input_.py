@@ -590,14 +590,22 @@ def read_atm_profile(profile_name,atm_depth,dz,direction):
         alt[i]=parameters[i,0]
         wind_zonal[i]=parameters[i,1]
         wind_merid[i]=parameters[i,2]
+<<<<<<< HEAD
         vel_adia[i]=331.3+0.66*(parameters[i,4]-272.15)
+=======
+        vel_adia[i]=20.05 * np.sqrt(parameters[i,4]) 
+>>>>>>> dev
         rho[i]=parameters[i,5]*1000
 
 
     alt[:]=alt[:] - alt[0]
 
     phi=radians(direction)
+<<<<<<< HEAD
     vel_effec=vel_adia+(sin(phi)*wind_zonal) + (cos(phi)*wind_merid)
+=======
+    vel_effec=vel_adia + sin(phi)*wind_zonal + cos(phi)*wind_merid
+>>>>>>> dev
 
 
     a=scipy.interpolate.PchipInterpolator(alt,vel_effec, extrapolate=True)
