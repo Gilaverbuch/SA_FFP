@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
-import numpy as np 
+import numpy as np
 from math import pi
 import sys
 import csv
-from netCDF4 import Dataset, date2num, num2date
+# from netCDF4 import Dataset, date2num, num2date
 import os, shutil, glob
 import obspy
 from obspy import Trace, Stream, UTCDateTime
@@ -16,7 +16,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
     loc_i='./'
     loc_f='./Results/'+Fname
-    
+
     if os.path.isdir(loc_f)==True:
         print('directory exist. removing and recreating')
         shutil.rmtree(loc_f)
@@ -37,7 +37,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
     t.stats["starttime"]=now_date
     t.stats["delta"]=dt
     t.stats["npts"]=len(time)
-    # t.filter("lowpass", freq=0.5) 
+    # t.filter("lowpass", freq=0.5)
     t.stats.sac = obspy.core.AttribDict()
     t.stats.STLA=0
     t.stats.sac.STLA=0
@@ -54,7 +54,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
         t.stats.sac = obspy.core.AttribDict()
         t.stats.stlat=0
         t.stats.sac.STLA=0
-        
+
         st.append(t)
     i=0
     for tr in st:
@@ -65,7 +65,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
         # tr.stats.stlon = r[i]
         # tr.stats.sac.STLO = r[i]
         # tr.stats.dist = r[i]/1000
-        
+
         tr.write("waveforms{0:0>7}.sac".format(i), format='sac')
 
     #st.write("waveforms", format='sac')
@@ -165,7 +165,7 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
 
 
-def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth, 
+def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth,
                     smooth_window, wavenumbers, layers, dz, Fname, Rec_alt, rho, S_medium, S_depth):
     #this function gets the Green's functions and pressure, and saves the P, TL and modes for a given altitude alt
     #P and TL are as function of range. Modes are function of phase velocity.
@@ -175,7 +175,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     loc_i='./'
     loc_f='./Results/'+Fname
-    
+
     if os.path.isdir(loc_f)==True:
         print('directory exist. removing and recreating')
         shutil.rmtree(loc_f)
@@ -191,24 +191,24 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     if S_medium=='earth':
         S_layer=earth_interface - int(S_depth/dz)-1
-        
+
         P_null= rho[S_layer]*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
     elif S_medium=='ocean':
         S_layer=earth_interface + int((Ocean_depth - S_depth)/dz)
-        
+
         P_null= 1*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
     elif S_medium=='atm':
         S_layer=earth_interface + ocean_interface + int(S_depth/dz)
-        
+
         P_null= -rho[S_layer]*(omega**2)*np.exp(1j * omega/Vp[S_layer])/(4*pi)
 
     phases=np.zeros(wavenumbers, dtype=np.float64)
     for i in range(1,wavenumbers):
         phases[i]=omega/np.real(K[i])
 
-    
+
 
     for alt in Rec_alt:
 
@@ -224,7 +224,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
         U_name3='TL_intensity_ref_reciever.nc'
         U_name4='Abs_pressure.nc'
 
-        
+
         with open(TL_name, 'w') as f:
             writer = csv.writer(f, delimiter='\t')
             a1 =  np.abs(P[pos,:])/np.sqrt(rho[pos]*Vp[pos])
@@ -325,7 +325,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     ncfile.close()
 
-    
+
     os.rename(loc_i+U_name1, loc_f+U_name1)
     # ----------------------------------------------------------------------------------------
 
@@ -376,7 +376,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     # ncfile.close()
 
-    
+
     # os.rename(loc_i+U_name2, loc_f+U_name2)
     # ----------------------------------------------------------------------------------------
 
@@ -430,7 +430,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     # ncfile.close()
 
-    
+
     # os.rename(loc_i+U_name3, loc_f+U_name3)
     # ----------------------------------------------------------------------------------------
 
@@ -482,7 +482,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     ncfile.close()
 
-    
+
     os.rename(loc_i+U_name4, loc_f+U_name4)
     # ----------------------------------------------------------------------------------------
 
@@ -490,7 +490,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
 
 
-def save_results_inversion(A, P, z, r, omega, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth, smooth_window, 
+def save_results_inversion(A, P, z, r, omega, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth, smooth_window,
                             wavenumbers, layers, dz, Fname, Rec_alt, Zs, fre, direction):
     #this function gets the Green's functions and pressure, and saves the P, TL and modes for a given altitude alt
     #P and TL are as function of range. Modes are function of phase velocity.
@@ -508,7 +508,7 @@ def save_results_inversion(A, P, z, r, omega, K, earth_interface, Earth_depth, o
 
     for alt in Rec_alt:
 
-        
+
         pos= pos_0 + np.int64(alt/dz)
         alt=np.int64(alt/dz) * dz
 

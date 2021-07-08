@@ -6,7 +6,7 @@ from math import pi
 # from scipy import interpolate
 # from scikits.umfpack import spsolve, splu
 import sys
-from netCDF4 import Dataset, date2num, num2date
+# from netCDF4 import Dataset, date2num, num2date
 import os
 import scipy.linalg.lapack as la
 import numba

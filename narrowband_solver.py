@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 from math import pi
 import sys
-from netCDF4 import Dataset, date2num, num2date
+# from netCDF4 import Dataset, date2num, num2date
 import os
 import scipy.linalg.lapack as la
 import time
