@@ -116,13 +116,10 @@ def get_greens_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_
 
 
 
+
 # @jit('c8[:], f4[:], f4[:], c8[:], c8[:], i4, i4, f4, i4, i4, i4, i4, i4[:], i4,  i4, f4[:], f4 , f4, f4,'
 #             'i4, i4, i4, i4, c8[:,:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4,' 
-#             'c8[:], c8[:], f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
-
-@jit('c8[:], f4[:], f4[:], c8[:], c8[:], i4, i4, f4, i4, i4, i4, i4, i4[:], i4,  i4, f4[:], f4 , f4, f4,'
-            'i4, i4, i4, i4, c8[:,:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4,' 
-            'f4[:], f4[:], f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
+#             'f4[:], f4[:], f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
 def set_C_F(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,
             earth_interface,Earth_depth,Ocean_depth,Atm_depth, C_Ab, Force, alpha, beta, pos_i, pos_f, C1,C2,C3,C4, n, kl, ku, 
             Kmp, Kms, delta_Kp, delta_Ks):
@@ -147,7 +144,7 @@ def set_C_F(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type
 
 
 
-@jit('c8[:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4',  parallel=True, nopython=True, nogil=True, fastmath=True)
+# @jit('c8[:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4',  parallel=True, nopython=True, nogil=True, fastmath=True)
 def construct_greens(K, A_sol, G, alpha, beta, C1, C2, earth_interface, layers, dz, pos_i, pos_f, name):
 
     for i in prange(pos_i, pos_f):
@@ -179,7 +176,6 @@ def construct_greens(K, A_sol, G, alpha, beta, C1, C2, earth_interface, layers, 
 
 def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,earth_interface,Earth_depth,Ocean_depth,Atm_depth,name):
     
-
     mat_size=layers*2
     n, kl, ku = np.int32((mat_size, 2, 2))
 
@@ -239,7 +235,6 @@ def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_
                                       pos_i, pos_f, n, kl, ku, mat_size, Kmp)
 
 
-
     linear_solver(A_sol, C_Ab, Force, kl, ku, pos_i, pos_f)
 
 
@@ -252,9 +247,9 @@ def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_
 
 
 
-# @jit(parallel=True, nopython=True, nogil=True)
-@jit('c8[:],f4[:],f4[:],c8[:],c8[:],i4,i4,f4,i4,i4,i4,i4,i4[:],i4,i4,f4[:],f4,f4,f4,i4,i4,i4,i4, c8[:,:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4, f4[:]'
-                    ,parallel=True, nopython=True, nogil=True, fastmath=True)
+# # @jit(parallel=True, nopython=True, nogil=True)
+# @jit('c8[:],f4[:],f4[:],c8[:],c8[:],i4,i4,f4,i4,i4,i4,i4,i4[:],i4,i4,f4[:],f4,f4,f4,i4,i4,i4,i4, c8[:,:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4, f4[:]'
+#                     ,parallel=True, nopython=True, nogil=True, fastmath=True)
 def set_C_F_acoustic(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,
                     earth_interface,Earth_depth,Ocean_depth,Atm_depth, C_Ab, Force, alpha, pos_i, pos_f, n, kl, ku, mat_size, Kmp):
 
@@ -279,7 +274,7 @@ def set_C_F_acoustic(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_dep
 
 
 
-@jit('c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4, i4', parallel=True, nopython=True, nogil=True, fastmath=True)
+# @jit('c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4, i4', parallel=True, nopython=True, nogil=True, fastmath=True)
 def construct_greens_acoustic(A_sol, G_p, G_w, alpha, layers, dz, pos_i, pos_f):
 
     for i in prange(pos_i, pos_f):
@@ -379,9 +374,9 @@ def get_greens_elastic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_m
     return G
 
 
-@jit('c8[:], f4[:], f4[:], c8[:], c8[:], i4, i4, f4, i4, i4, i4, i4, i4[:], i4,  i4, f4[:], f4 , f4, f4,'
-            'i4, i4, i4, i4, c8[:,:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4,' 
-            'c8[:], c8[:], i4, f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
+# @jit('c8[:], f4[:], f4[:], c8[:], c8[:], i4, i4, f4, i4, i4, i4, i4, i4[:], i4,  i4, f4[:], f4 , f4, f4,'
+#             'i4, i4, i4, i4, c8[:,:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4,' 
+#             'c8[:], c8[:], i4, f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
 def set_C_F_elastic(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,
             earth_interface,Earth_depth,Ocean_depth,Atm_depth, C_Ab, Force, alpha, beta, pos_i, pos_f, C1,C2,C3,C4, n, kl, ku, 
             Kmp, Kms, mat_size,delta_Kp,delta_Ks):
@@ -404,7 +399,7 @@ def set_C_F_elastic(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_dept
 
 
 
-@jit('c8[:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4',  parallel=True, nopython=True, nogil=True, fastmath=True)
+# @jit('c8[:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4',  parallel=True, nopython=True, nogil=True, fastmath=True)
 def construct_greens_elastic(K, A_sol, G, alpha, beta, C1, C2, earth_interface, layers, dz, pos_i, pos_f, name):
 
     for i in prange(pos_i, pos_f):
