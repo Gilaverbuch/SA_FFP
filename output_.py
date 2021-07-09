@@ -8,7 +8,7 @@ import os, shutil, glob
 import obspy
 from obspy import Trace, Stream, UTCDateTime
 
-
+import xarray as xr
 
 
 
@@ -165,6 +165,8 @@ def save_time(P_t, P_f, A_p_f,  time, freq, r, Rec_alt,  K,  Fname):
 
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 
 def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth,
@@ -172,8 +174,7 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     #this function gets the Green's functions and pressure, and saves the P, TL and modes for a given altitude alt
     #P and TL are as function of range. Modes are function of phase velocity.
 
-    # loc_i='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'
-    # loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/parallel/'+Fname
+
 
     loc_i='./'
     loc_f='./Results/'+Fname
@@ -279,32 +280,10 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
     os.rename(loc_i+dens_name, loc_f+dens_name)
 
-    # ----------------------------------------------------------------------------------------
-    # TL wave intensity ref source
-    # ----------------------------------------------------------------------------------------
-    ncfile = Dataset(U_name1, 'w', format='NETCDF4_CLASSIC')
 
-    Uzz_atts = {'units': 'diss', 'long_name':   'Transmission Loss'}
-    z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
-    r_atts = {'units': 'km', 'long_name':   'Range'}
-
-    # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
-
-    ncfile.createDimension('z', layers)
-    ncfile.createDimension('r', wavenumbers)
-
-
-    r_var = ncfile.createVariable('r', np.float64, ('r',))
-    z_var = ncfile.createVariable('z', np.float64, ('z',))
-    Uzz_var = ncfile.createVariable('diss', np.float64, ('z','r', ))
-
-    r_var.setncatts(r_atts)
-    z_var.setncatts(z_atts)
-    Uzz_var.setncatts(Uzz_atts)
 
 
     displacement = P.copy()
-
     a2 = np.abs(P_null)/np.sqrt(rho[S_layer]*Vp[S_layer])
     for l in range(0, layers):
 
@@ -321,14 +300,75 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
 
 
 
-    r_var[:] = r/1000
-    z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
-    Uzz_var[:] = displacement
+    da = xr.Dataset(
+     {"TL": (("Altitude", "Range"), displacement)},
+     coords={
+         "Range": r/1000,
+         "Altitude": z/1000- (Earth_depth + Ocean_depth)/1000,
+     },
+    attrs=dict(
+             description="Trnsmission loss",
+             units="dB",)
+    )
 
-    ncfile.close()
 
-
+    da.to_netcdf(path=U_name1, mode='w')
     os.rename(loc_i+U_name1, loc_f+U_name1)
+
+    # # ----------------------------------------------------------------------------------------
+    # # TL wave intensity ref source
+    # # ----------------------------------------------------------------------------------------
+    # ncfile = Dataset(U_name1, 'w', format='NETCDF4_CLASSIC')
+
+    # Uzz_atts = {'units': 'diss', 'long_name':   'Transmission Loss'}
+    # z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
+    # r_atts = {'units': 'km', 'long_name':   'Range'}
+
+    # # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
+
+    # ncfile.createDimension('z', layers)
+    # ncfile.createDimension('r', wavenumbers)
+
+
+    # r_var = ncfile.createVariable('r', np.float64, ('r',))
+    # z_var = ncfile.createVariable('z', np.float64, ('z',))
+    # Uzz_var = ncfile.createVariable('diss', np.float64, ('z','r', ))
+
+    # r_var.setncatts(r_atts)
+    # z_var.setncatts(z_atts)
+    # Uzz_var.setncatts(Uzz_atts)
+
+
+    # displacement = P.copy()
+
+    # a2 = np.abs(P_null)/np.sqrt(rho[S_layer]*Vp[S_layer])
+    # for l in range(0, layers):
+
+    #     a1 =  np.abs(P[l,:])/np.sqrt(rho[l]*Vp[l])
+
+    #     displacement[l,:]=20*np.log10(a1/a2)
+
+
+    # displacement=np.real(displacement)
+
+    # displacement[np.isposinf(displacement)] = -2000
+    # displacement[np.isneginf(displacement)] = -2000
+    # displacement[np.isnan(displacement)] = -2000
+
+
+
+    # r_var[:] = r/1000
+    # z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
+    # Uzz_var[:] = displacement
+
+    # ncfile.close()
+
+
+    # os.rename(loc_i+U_name1, loc_f+U_name1)
+
+
+
+
     # ----------------------------------------------------------------------------------------
 
 
@@ -437,122 +477,54 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
     # ----------------------------------------------------------------------------------------
 
 
-    # ----------------------------------------------------------------------------------------
-    # Absolute pressure
-    # ----------------------------------------------------------------------------------------
-    ncfile = Dataset(U_name4, 'w', format='NETCDF4_CLASSIC')
+    # # ----------------------------------------------------------------------------------------
+    # # Absolute pressure
+    # # ----------------------------------------------------------------------------------------
+    # ncfile = Dataset(U_name4, 'w', format='NETCDF4_CLASSIC')
 
-    Uzz_atts = {'units': 'Pa', 'long_name':   'Absolute pressure'}
-    z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
-    r_atts = {'units': 'km', 'long_name':   'Range'}
+    # Uzz_atts = {'units': 'Pa', 'long_name':   'Absolute pressure'}
+    # z_atts = {'units': 'km', 'long_name':   'Altitude', 'positive': 'up', 'axis': 'Z'}
+    # r_atts = {'units': 'km', 'long_name':   'Range'}
 
-    # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
+    # # (Initial_parameters.layers, Initial_parameters.wavenumbers) = data['tl'].shape
 
-    ncfile.createDimension('z', layers)
-    ncfile.createDimension('r', wavenumbers)
-
-
-    r_var = ncfile.createVariable('r', np.float64, ('r',))
-    z_var = ncfile.createVariable('z', np.float64, ('z',))
-    Uzz_var = ncfile.createVariable('P_abs', np.float64, ('z','r', ))
-
-    r_var.setncatts(r_atts)
-    z_var.setncatts(z_atts)
-    Uzz_var.setncatts(Uzz_atts)
+    # ncfile.createDimension('z', layers)
+    # ncfile.createDimension('r', wavenumbers)
 
 
-    displacement = P.copy()
+    # r_var = ncfile.createVariable('r', np.float64, ('r',))
+    # z_var = ncfile.createVariable('z', np.float64, ('z',))
+    # Uzz_var = ncfile.createVariable('P_abs', np.float64, ('z','r', ))
 
-    for l in range(0, layers):
-
-        a1 =  np.abs(P[l,:])#/np.sqrt(rho[l]*Vp[l])
-
-        displacement[l,:]=a1
-
-
-    displacement=np.real(displacement)
-
-    displacement[np.isposinf(displacement)] = -2000
-    displacement[np.isneginf(displacement)] = -2000
-    displacement[np.isnan(displacement)] = -2000
+    # r_var.setncatts(r_atts)
+    # z_var.setncatts(z_atts)
+    # Uzz_var.setncatts(Uzz_atts)
 
 
+    # displacement = P.copy()
 
-    r_var[:] = r/1000
-    z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
-    Uzz_var[:] = displacement
+    # for l in range(0, layers):
 
-    ncfile.close()
+    #     a1 =  np.abs(P[l,:])#/np.sqrt(rho[l]*Vp[l])
+
+    #     displacement[l,:]=a1
 
 
-    os.rename(loc_i+U_name4, loc_f+U_name4)
-    # ----------------------------------------------------------------------------------------
+    # displacement=np.real(displacement)
+
+    # displacement[np.isposinf(displacement)] = -2000
+    # displacement[np.isneginf(displacement)] = -2000
+    # displacement[np.isnan(displacement)] = -2000
 
 
 
+    # r_var[:] = r/1000
+    # z_var[:] = z/1000 - (Earth_depth + Ocean_depth)/1000
+    # Uzz_var[:] = displacement
+
+    # ncfile.close()
 
 
-def save_results_inversion(A, P, z, r, omega, K, earth_interface, Earth_depth, ocean_interface, Ocean_depth, smooth_window,
-                            wavenumbers, layers, dz, Fname, Rec_alt, Zs, fre, direction):
-    #this function gets the Green's functions and pressure, and saves the P, TL and modes for a given altitude alt
-    #P and TL are as function of range. Modes are function of phase velocity.
+    # os.rename(loc_i+U_name4, loc_f+U_name4)
+    # # ----------------------------------------------------------------------------------------
 
-
-    loc_i='/Users/gil/Dropbox/study/FFP/seismo-acoustic/estimating-source-depth/Toy_profile/'
-    loc_f='/Users/gil/Dropbox/study/FFP/seismo-acoustic/estimating-source-depth/Toy_profile/TL_data/'
-
-    pos_0= earth_interface + ocean_interface
-    print ('pos 0 ', pos_0)
-    phases=np.zeros(wavenumbers, dtype=np.float64)
-    for i in range(1,wavenumbers):
-        phases[i]=omega/np.real(K[i])
-
-
-    for alt in Rec_alt:
-
-
-        pos= pos_0 + np.int64(alt/dz)
-        alt=np.int64(alt/dz) * dz
-
-        print('layer to save', pos)
-
-        # TL_name=Fname+'_TL_alt_'+str(alt)+'.csv'
-        # P_name=Fname+'_abs-pressure_alt_'+str(alt)+'.csv'
-        # Modes_name=Fname+'_modes_alt_'+str(alt)+'.csv'
-
-        TL_name=Fname+'_TL_Zs_'+'{0:0>5}'.format(Zs)+'_f_'+'{0:0>5.1f}'.format(fre)+'.csv'
-        P_name=Fname+'_P_Zs_'+'{0:0>5}'.format(Zs)+'_f_'+'{0:0>5.1f}'.format(fre)+'.csv'
-        Modes_name=Fname+'_modes_Z_s_'+'{0:0>5}'.format(Zs)+'_f_'+'{0:0>5.1f}'.format(fre)+'.csv'
-
-        # with open(TL_name, 'w') as f:
-        #     writer = csv.writer(f, delimiter='\t')
-        #     writer.writerows(zip(r/1000,20*np.log10(np.abs(P[pos,:])/(4*pi))))
-
-        # with open(P_name, 'w') as f:
-        #     writer = csv.writer(f, delimiter='\t')
-        #     writer.writerows(zip(r/1000,np.abs(P[pos,:])))
-
-        # with open(Modes_name, 'w') as f:
-        #     writer = csv.writer(f, delimiter='\t')
-        #     writer.writerows(zip(phases,np.abs(A[pos,:])*smooth_window[:wavenumbers]))
-
-        # os.rename(loc_i+TL_name, loc_f+TL_name)
-        # os.rename(loc_i+P_name, loc_f+P_name)
-        # os.rename(loc_i+Modes_name, loc_f+Modes_name)
-
-
-        # P_name=Fname+'_P_Zs_'+'{0:0>5}'.format(Zs)+'_f_'+'{0:0>5.1f}'.format(fre)+'.csv'
-        P_name='TL_az'+str(int(direction))+'_s'+str(Zs)+'_f'+str(fre)+'_.csv'
-        print(P_name)
-        with open(P_name, 'w') as f:
-            writer = csv.writer(f, delimiter='\t')
-            writer.writerows(zip(r/1000,np.abs(P[pos,:])))
-
-        os.rename(loc_i+P_name, loc_f+P_name)
-
-
-
-    # plt.figure(figsize=[15,5])
-    # plt.plot(r/1000,20*np.log10(np.abs(P[pos,:])/(4*pi)))
-    # plt.xlim([0,1000])
-    # plt.show()

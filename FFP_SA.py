@@ -1,10 +1,9 @@
-import numba
-numba.config.NUMBA_NUM_THREADS=4
 
 import os 
-os.environ['MKL_NUM_THREADS']='1'
-os.environ['NUMEXPR_NUM_THREADS']='1'
-os.environ['OMP_NUM_THREADS']='1'
+NUM_THREADS = "1"
+os.environ['MKL_NUM_THREADS']='NUM_THREADS'
+os.environ['NUMEXPR_NUM_THREADS']='NUM_THREADS'
+os.environ['OMP_NUM_THREADS']='NUM_THREADS'
 
 
 import matplotlib.pyplot as plt
@@ -15,6 +14,7 @@ import sys
 import os
 import scipy.linalg.lapack as la
 import time
+import numba
 from numba import jit, prange
 
 #my library

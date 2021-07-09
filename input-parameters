@@ -1,17 +1,16 @@
 Simulation      type=narrowband
 Frequency       f=0.5                                
 dz              dz=50
-Wavenumbers     n=1024
+Wavenumbers     n=2048
 Source          S_medium=atm                     S_depth=1001       S_type=source           
-BC-top          bc=rigid                          
+BC-top          bc=radiation                          
 BC-bottom       bc=radiation                           
-File-name       name=acoustic_test                       type=acoustic
-C               Cmin=300                            Cmax=450                            
-Earth           type=non                    depth=15000   Attenuation=off             
+File-name       name=acoustic_test                     type=acoustic
+C               Cmin=300                            Cmax=550                            
+Earth           type=non                    depth=5000   Attenuation=off             
 Ocean           type=non                   depth=5000                           
-Atm             ATM_type=soundspeed_east_strat.dat      depth=10000     direction=90
+Atm             ATM_type=soundspeed_east_strat.dat      depth=130000     direction=90
 Receiver        Rec_alt=1000
-
 
 # Specifications:
 # 1.MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!

@@ -10,7 +10,7 @@ from numba import jit, prange
 
 #my library
 from input_ import Parameters 
-from output_ import save_results, save_results_inversion
+from output_ import save_results
 from exact_solutions import Exact_solver
 from Greens_parallel import get_greens_parallel, get_greens_acoustic_parallel, get_greens_elastic_parallel
 from Go_to_range import go_to_range, go_to_range_acoustic
