@@ -8,7 +8,7 @@ File-name       name=exact          type=N2
 C               Cmin=300                Cmax=450                            
 Earth           type=non            depth=600       Attenuation=off            
 Ocean           type=non                depth=0                           
-Atm             ATM_type=N2           depth=150000     direction=90 
+Atm             ATM_type=N2           depth=150000     direction=90 Attenuation=off
 
 # Specifications:
 # 1.MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!

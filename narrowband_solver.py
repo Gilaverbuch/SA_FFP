@@ -62,7 +62,8 @@ def solve_narrowband(Initial_parameters):
                                 Initial_parameters.dz, Initial_parameters.S_medium, Initial_parameters.S_depth, Initial_parameters.S_type,
                                 Initial_parameters.z, Initial_parameters.BCtop, Initial_parameters.BCbottom, Initial_parameters.rho,
                                 Initial_parameters.Kmin, Initial_parameters.Kmax, Initial_parameters.dK, Initial_parameters.earth_interface,
-                                Initial_parameters.Earth_depth, Initial_parameters.Ocean_depth, Initial_parameters.Atm_depth, Initial_parameters.Fname)
+                                Initial_parameters.Earth_depth, Initial_parameters.Ocean_depth, Initial_parameters.Atm_depth, Initial_parameters.Fname,
+                                Initial_parameters.atm_atten_profile)
         
 
 
@@ -95,7 +96,7 @@ def solve_narrowband(Initial_parameters):
                     Initial_parameters.z,Initial_parameters.BCtop,Initial_parameters.BCbottom,Initial_parameters.rho
                     ,Initial_parameters.Kmin,Initial_parameters.Kmax,Initial_parameters.dK,Initial_parameters.earth_interface,
                     Initial_parameters.Earth_depth,Initial_parameters.Ocean_depth,Initial_parameters.Atm_depth,Initial_parameters.Fname,
-                    Initial_parameters.delta_Kp, Initial_parameters.delta_Ks)
+                    Initial_parameters.delta_Kp, Initial_parameters.delta_Ks, Initial_parameters.atm_atten_profile)
 
 
         print ("Go to range")

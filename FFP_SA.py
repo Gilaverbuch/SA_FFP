@@ -1,9 +1,9 @@
 
 import os 
-NUM_THREADS = "1"
-os.environ['MKL_NUM_THREADS']='NUM_THREADS'
-os.environ['NUMEXPR_NUM_THREADS']='NUM_THREADS'
-os.environ['OMP_NUM_THREADS']='NUM_THREADS'
+
+os.environ['MKL_NUM_THREADS']= "1" 
+os.environ['NUMEXPR_NUM_THREADS']= "1"
+os.environ['OMP_NUM_THREADS']= "1"
 
 
 import matplotlib.pyplot as plt

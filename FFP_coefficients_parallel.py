@@ -15,7 +15,7 @@ from numba import jit
 # @jit('i4, c8, f4[:], f4[:], c8[:], c8[:], f4, i4[:], i4, i4, i4, f4[:], i4, c8[:,:], c8[:], c8[:], c8[:],'
 #         'c8[:], c8[:], c8[:], c8[:], c8[:], c8[:], i4, i4, i4', nopython=True,fastmath=True)
 @jit('i4, c8, f4[:], f4[:], c8[:], c8[:], f4, i4[:], i4, i4, i4, f4[:], i4, c8[:,:], c8[:], c8[:], c8[:],'
-        'c8[:], c8[:], c8[:], c8[:], f4[:], f4[:], i4, i4, i4', nopython=True,fastmath=True)
+        'c8[:], c8[:], c8[:], c8[:], c8[:], f4[:], i4, i4, i4', nopython=True,fastmath=True)
 def coefficients_Ab_parallel(layers,kr,Vp,Vs,lamda,mu,omega,z,dz,BCtop,BCbottom,rho,earth_interface,
                     A,Force_1D,alpha_1D,beta_1D,C1_1D,C2_1D,C3_1D,C4_1D, Kmp, Kms, n, kl, ku):
 

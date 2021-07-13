@@ -120,6 +120,8 @@ class Parameters:
                         self.direction=float((lines[i][j].replace('direction=','')))
                     elif 'dcdz=' in lines[i][j]: 
                         self.dcdz=np.float32((lines[i][j].replace('dcdz=','')))
+                    elif 'Attenuation=' in lines[i][j]: 
+                        self.Atm_attenuation=(lines[i][j].replace('Attenuation=',''))
                 if self.Atm=='non':
                     self.Atm_depth=np.int32(0)
                 if not 'dcdz' in dir(self) and self.Atm=='linear':
@@ -435,7 +437,10 @@ class Parameters:
 
             else:
                 self.Vp[self.earth_interface:],self.rho[self.earth_interface:]=read_atm_profile(self.Atm, self.Atm_depth, self.dz, self.direction)
-
+            if self.Atm_attenuation == "on":
+                self.atm_atten_profile = atmosphere_attenuation_profile(self.Atm, self.Atm_depth, self.dz)
+            elif self.Atm_attenuation == "off":
+                self.atm_atten_profile = self.Vp[self.earth_interface:] * 0
 
 
         #ocean-atmosphere
@@ -477,6 +482,7 @@ class Parameters:
         #atmosphere
         elif self.Earth=='non' and self.Ocean=='non' and self.Atm!='non':
             print('only atmosphere')
+            print(self.Atm)
 
             self.earth_interface=np.int32(0)
             self.ocean_interface=np.int32(0)
@@ -500,9 +506,17 @@ class Parameters:
             else:
                 self.Vp[:],self.rho[self.earth_interface:]=read_atm_profile(self.Atm, self.Atm_depth, self.dz, self.direction)
 
+            if self.Atm_attenuation == "on":
+                self.atm_atten_profile = atmosphere_attenuation_profile(self.Atm, self.Atm_depth, self.dz)
+            elif self.Atm_attenuation == "off":
+                self.atm_atten_profile = self.Vp * 0
+
+
+
+
         #earth
         elif self.Earth!='non' and self.Ocean=='non' and self.Atm=='non':
-            print('earth-atmosphere')
+            print('only-earth')
             self.earth_interface=np.int32(self.Earth_depth/self.dz)
 
             if self.Earth=="Granite":
@@ -537,12 +551,15 @@ class Parameters:
             self.delta_Kp=np.zeros(self.layers,dtype=np.float32)
             self.delta_Ks=np.zeros(self.layers,dtype=np.float32)
 
+
+
+
     def print_velocity_profile(self):
         """
         Prints the velocity profile. If Ocean is included, the depth will start at -5Km
         """
-        axis_font = {'fontname':'Arial', 'size':'25'}
-        title_font = {'fontname':'Arial', 'size':'20'}
+        axis_font = {'fontname':'DejaVu Sans', 'size':'25'}
+        title_font = {'fontname':'DejaVu Sans', 'size':'20'}
         fontsize=10;
 
         plt.figure()
@@ -571,6 +588,7 @@ def read_atm_profile(profile_name,atm_depth,dz,direction):
     z=np.zeros(layers,dtype=np.int32)
     for i in range(0,layers):
         z[i]=i*dz
+
 
     parameters=np.loadtxt(profile_name)
     l=len(parameters)
@@ -613,12 +631,39 @@ def read_atm_profile(profile_name,atm_depth,dz,direction):
     plt.plot(vel_adia,alt,'g')
     plt.show()
 
-    
-
-
 
 
     return vel_interp,rho_interp
+
+
+def atmosphere_attenuation_profile(profile_name,atm_depth,dz):
+
+    #reading atmopsher conditions
+    layers=int(atm_depth/dz)
+    z=np.zeros(layers,dtype=np.int32)
+    for i in range(0,layers):
+        z[i]=i*dz
+
+    profile_name = profile_name + '_attenuation_1Hz'
+    parameters=np.loadtxt(profile_name)
+    l=len(parameters)
+
+    alt=np.ndarray(l,dtype=np.float32)
+    atten=np.ndarray(l,dtype=np.float32)
+
+    for i in range(0,l):
+        alt[i]=parameters[i,0]
+        atten[i]=parameters[i,1]
+
+    a=scipy.interpolate.PchipInterpolator(alt,atten, extrapolate=True)
+    atten_interp=a(z/float(1000))
+
+    plt.figure()
+    plt.plot(atten_interp,z/1000,'r',linewidth=3.0)
+    plt.plot(atten,alt,'g')
+    plt.show()
+
+    return atten_interp
 
 #--------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------

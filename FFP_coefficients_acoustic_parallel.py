@@ -13,7 +13,7 @@ from numba import jit
 #--------------------------------------------------------------------------------------------------
 
 # @jit(nopython=True)
-@jit('i4,c8,f4[:],f4[:],c8[:],c8[:],f4,i4[:],i4,c8[:],i4,i4,f4[:],i4, c8[:,:], c8[:], f4[:], i4, i4, i4, i4', nopython=True,fastmath=True)
+@jit('i4,c8,f4[:],f4[:],c8[:],c8[:],f4,i4[:],i4,c8[:],i4,i4,f4[:],i4, c8[:,:], c8[:], c8[:], i4, i4, i4, i4', nopython=True,fastmath=True)
 def coefficients_Ab_acoustic_parallel(layers,kr,Vp,Vs,lamda,mu,omega,z,dz,Force_1D,BCtop,BCbottom,rho,earth_interface, A, 
                                         alpha_1D, Kmp, n, kl, ku, mat_size):
     

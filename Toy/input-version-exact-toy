@@ -8,7 +8,7 @@ File-name       name=toy          type=toy
 C               Cmin=300                Cmax=600                            
 Earth           type=non            depth=600        Attenuation=off        
 Ocean           type=non                depth=0                           
-Atm             ATM_type=./Toy/soundspeed_east_strat.dat           depth=140000     direction=90 
+Atm             ATM_type=./Toy/soundspeed_east_strat.dat           depth=140000     direction=90 Attenuation=off
 
 # Specifications:
 # 1.MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!

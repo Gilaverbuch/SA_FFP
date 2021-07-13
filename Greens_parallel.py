@@ -1,8 +1,8 @@
 import os 
-NUM_THREADS = "1"
-os.environ['MKL_NUM_THREADS']='NUM_THREADS'
-os.environ['NUMEXPR_NUM_THREADS']='NUM_THREADS'
-os.environ['OMP_NUM_THREADS']='NUM_THREADS'
+
+os.environ['MKL_NUM_THREADS']= "1"
+os.environ['NUMEXPR_NUM_THREADS']= "1"
+os.environ['OMP_NUM_THREADS']= "1"
 
 import matplotlib.pyplot as plt
 import numpy as np 
@@ -22,7 +22,7 @@ from FFP_coefficients_elastic_parallel import coefficients_Ab_elastic_parallel, 
 
 #--------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------
-def get_greens_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,earth_interface,Earth_depth,Ocean_depth,Atm_depth,name,delta_Kp,delta_Ks):
+def get_greens_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,earth_interface,Earth_depth,Ocean_depth,Atm_depth,name,delta_Kp,delta_Ks, atm_atten):
 
 
     mat_size=earth_interface*4 + (layers-earth_interface-2)*2 
@@ -48,7 +48,8 @@ def get_greens_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_
     Kmp=np.zeros(layers,dtype=np.float32)
     Kms=np.zeros(layers,dtype=np.float32)
 
-    Kmp=np.float32(omega)/Vp[:] 
+    Kmp=np.complex64(omega/Vp[:])
+    Kmp[earth_interface:] = np.complex64(Kmp[earth_interface:] + 1j*atm_atten) 
     Kms[:earth_interface]=np.float32(omega)/Vs[:earth_interface] 
 
 
@@ -125,7 +126,7 @@ def get_greens_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_
 
 @jit('c8[:], f4[:], f4[:], c8[:], c8[:], i4, i4, f4, i4, i4, i4, i4, i4[:], i4,  i4, f4[:], f4 , f4, f4,'
             'i4, i4, i4, i4, c8[:,:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, c8[:,:], c8[:,:], c8[:,:], c8[:,:], i4, i4, i4,' 
-            'f4[:], f4[:], f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
+            'c8[:], f4[:], f4[:], f4[:]' ,parallel=True, nopython=True, nogil=True, fastmath=True)
 def set_C_F(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,
             earth_interface,Earth_depth,Ocean_depth,Atm_depth, C_Ab, Force, alpha, beta, pos_i, pos_f, C1,C2,C3,C4, n, kl, ku, 
             Kmp, Kms, delta_Kp, delta_Ks):
@@ -180,7 +181,7 @@ def construct_greens(K, A_sol, G, alpha, beta, C1, C2, earth_interface, layers, 
 #--------------------------------------------------------------------------------------------------
 
 
-def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,earth_interface,Earth_depth,Ocean_depth,Atm_depth,name):
+def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,earth_interface,Earth_depth,Ocean_depth,Atm_depth,name, atm_atten):
     
     mat_size=layers*2
     n, kl, ku = np.int32((mat_size, 2, 2))
@@ -193,7 +194,8 @@ def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_
     A_sol=np.zeros((mat_size,wavenumbers),dtype=np.complex64)
 
 
-    Kmp=np.float32(omega)/Vp[:]
+    Kmp=np.complex64(omega/Vp[:] + 1j*atm_atten)
+
 
     pos_i=np.int32(min(range(len(K)), key=lambda i: abs(np.real(K[i]) - kmin)))
     pos_f=np.int32(min(range(len(K)), key=lambda i: abs(np.real(K[i]) - kmax)))
@@ -254,7 +256,7 @@ def get_greens_acoustic_parallel(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_
 
 
 # @jit(parallel=True, nopython=True, nogil=True)
-@jit('c8[:],f4[:],f4[:],c8[:],c8[:],i4,i4,f4,i4,i4,i4,i4,i4[:],i4,i4,f4[:],f4,f4,f4,i4,i4,i4,i4, c8[:,:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4, f4[:]'
+@jit('c8[:],f4[:],f4[:],c8[:],c8[:],i4,i4,f4,i4,i4,i4,i4,i4[:],i4,i4,f4[:],f4,f4,f4,i4,i4,i4,i4, c8[:,:,:], c8[:,:], c8[:,:], i4, i4, i4, i4, i4, i4, c8[:]'
                     ,parallel=True, nopython=True, nogil=True, fastmath=True)
 def set_C_F_acoustic(K,Vp,Vs,lamda,mu,layers,wavenumbers,omega,dz,S_medium,S_depth,S_type,z,BCtop,BCbottom,rho,kmin,kmax,dK,
                     earth_interface,Earth_depth,Ocean_depth,Atm_depth, C_Ab, Force, alpha, pos_i, pos_f, n, kl, ku, mat_size, Kmp):
