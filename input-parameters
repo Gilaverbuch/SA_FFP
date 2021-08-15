@@ -1,13 +1,13 @@
 Simulation      type=narrowband
 Frequency       f=1                                
 dz              dz=20
-Wavenumbers     n=4096
+Wavenumbers     n=8192
 Source          S_medium=earth                     S_depth=501       S_type=source           
 BC-top          bc=radiation                          
 BC-bottom       bc=radiation                           
 File-name       name=acoustic_test_attn_on                     type=acoustic
-C               Cmin=400                            Cmax=700                            
-Earth           type=Wet-sand                    depth=5000   Attenuation=off             
+C               Cmin=450                            Cmax=700                            
+Earth           type=Wet-sand                    depth=5000   Attenuation=on             
 Ocean           type=non                   depth=5000                           
 Atm             ATM_type=./Results/Venus_atm      depth=25000     direction=0  Attenuation=on
 Receiver        Rec_alt=20000

@@ -233,6 +233,8 @@ def save_results(A, P, z, r, omega, Vp, K, earth_interface, Earth_depth, ocean_i
             a1 =  np.abs(P[pos,:])/np.sqrt(rho[pos]*Vp[pos])
             a2 =  np.abs(P_null)/np.sqrt(rho[S_layer]*Vp[S_layer])
 
+            # a2 =  np.abs(P[pos_0+1,200])/np.sqrt(rho[pos_0+1]*Vp[pos_0+1])
+
             writer.writerows(zip(r/1000,20*np.log10(a1/a2)))
 
 
