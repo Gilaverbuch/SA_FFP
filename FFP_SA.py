@@ -12,7 +12,7 @@ from math import pi
 import sys
 # from netCDF4 import Dataset, date2num, num2date
 import os
-import scipy.linalg.lapack as la
+# import scipy.linalg.lapack as la
 import time
 import numba
 from numba import jit, prange

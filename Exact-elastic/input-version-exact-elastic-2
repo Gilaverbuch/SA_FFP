@@ -8,7 +8,7 @@ File-name       name=exact          type=elastic
 C               Cmin=5000                Cmax=5100                            
 Earth           type=Granite            depth=4000          Attenuation=off      
 Ocean           type=non                depth=0                           
-Atm             ATM_type=non            depth=400     direction=90 
+Atm             ATM_type=non            depth=400     direction=90 Attenuation=off
 
 # Specifications:
 # 1.MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!

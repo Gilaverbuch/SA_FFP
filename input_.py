@@ -305,6 +305,20 @@ class Parameters:
                     self.Q_mu, self.Q_lamda, self.delta_Kp, self.delta_Ks= calc_attenuation_parameters(self.Vs, self.mu, self.lamda, self.earth_interface , self.layers)
                     self.mu[:]= self.mu[:] - 1j*self.Q_mu[:]
                     self.lamda[:]= self.lamda[:] - 1j*self.Q_lamda[:]
+
+            elif self.Earth=="Ice":
+                self.rho[:self.earth_interface]=920
+                self.Vp[:self.earth_interface]=3810
+                self.Vs[:self.earth_interface]=1860
+                if self.Earth_attenuation=="off": 
+                    self.lamda[:]=calc_lam(self.Vp,self.Vs,self.rho)
+                    self.mu[:]=calc_mu(self.Vs,self.rho)
+                elif self.Earth_attenuation=="on":
+                    self.lamda[:]=calc_lam(self.Vp,self.Vs,self.rho)
+                    self.mu[:]=calc_mu(self.Vs,self.rho)
+                    self.Q_mu, self.Q_lamda, self.delta_Kp, self.delta_Ks= calc_attenuation_parameters(self.Vs, self.mu, self.lamda, self.earth_interface , self.layers)
+                    self.mu[:]= self.mu[:] - 1j*self.Q_mu[:]
+                    self.lamda[:]= self.lamda[:] - 1j*self.Q_lamda[:]
             
 
             if self.Ocean=="homogeneous":
@@ -320,6 +334,7 @@ class Parameters:
             if self.Atm=="homogeneous":
                 self.Vp[self.ocean_interface:]=330
                 self.rho[self.ocean_interface:]=1
+                self.atm_atten_profile = self.Vp[self.earth_interface:] * 0
 
             elif self.Atm=="linear":
                 self.Vp[self.ocean_interface:]=330 + self.dcdz*(self.z[self.ocean_interface:]-self.z[self.ocean_interface])
@@ -362,6 +377,20 @@ class Parameters:
                     self.Q_mu, self.Q_lamda, self.delta_Kp, self.delta_Ks= calc_attenuation_parameters(self.Vs, self.mu, self.lamda, self.earth_interface , self.layers)
                     self.mu[:]= self.mu[:] - 1j*self.Q_mu[:]
                     self.lamda[:]= self.lamda[:] - 1j*self.Q_lamda[:]
+
+            elif self.Earth=="Ice":
+                self.rho[:self.earth_interface]=920
+                self.Vp[:self.earth_interface]=3810
+                self.Vs[:self.earth_interface]=1860
+                if self.Earth_attenuation=="off": 
+                    self.lamda[:]=calc_lam(self.Vp,self.Vs,self.rho)
+                    self.mu[:]=calc_mu(self.Vs,self.rho)
+                elif self.Earth_attenuation=="on":
+                    self.lamda[:]=calc_lam(self.Vp,self.Vs,self.rho)
+                    self.mu[:]=calc_mu(self.Vs,self.rho)
+                    self.Q_mu, self.Q_lamda, self.delta_Kp, self.delta_Ks= calc_attenuation_parameters(self.Vs, self.mu, self.lamda, self.earth_interface , self.layers)
+                    self.mu[:]= self.mu[:] - 1j*self.Q_mu[:]
+                    self.lamda[:]= self.lamda[:] - 1j*self.Q_lamda[:]
             
 
             if self.Ocean=="homogeneous":
@@ -372,6 +401,9 @@ class Parameters:
                 nz=self.layers-self.earth_interface
                 self.Vp[self.earth_interface:]=make_munk(self.Ocean_depth,nz)
                 self.rho[self.earth_interface:]=1000
+
+            self.atm_atten_profile = self.Vp[self.earth_interface:] * 0
+
 
         #earth-atmosphere
         elif self.Earth!='non' and self.Ocean=='non' and self.Atm!='non':
@@ -477,6 +509,11 @@ class Parameters:
 
             else:
                 self.Vp[self.ocean_interface:],self.rho[self.ocean_interface:]=read_atm_profile(self.Atm, self.Atm_depth, self.dz, self.direction)
+
+            if self.Atm_attenuation == "on":
+                self.atm_atten_profile = atmosphere_attenuation_profile(self.Atm, self.Atm_depth, self.dz)
+            elif self.Atm_attenuation == "off":
+                self.atm_atten_profile = self.Vp * 0
 
 
         #atmosphere

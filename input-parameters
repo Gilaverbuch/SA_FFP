@@ -1,16 +1,16 @@
 Simulation      type=narrowband
-Frequency       f=1                                
-dz              dz=20
-Wavenumbers     n=8192
-Source          S_medium=earth                     S_depth=501       S_type=source           
+Frequency       f=500                                
+dz              dz=5
+Wavenumbers     n=16384
+Source          S_medium=ocean                     S_depth=500       S_type=source           
 BC-top          bc=radiation                          
-BC-bottom       bc=radiation                           
-File-name       name=acoustic_test_attn_on                     type=acoustic
-C               Cmin=450                            Cmax=700                            
-Earth           type=Wet-sand                    depth=5000   Attenuation=on             
-Ocean           type=non                   depth=5000                           
-Atm             ATM_type=./Results/Venus_atm      depth=25000     direction=0  Attenuation=on
-Receiver        Rec_alt=20000
+BC-bottom       bc=rigid                           
+File-name       name=exact                     type=acoustic
+C               Cmin=1490                            Cmax=2000                            
+Earth           type=Ice                    depth=200   Attenuation=off             
+Ocean           type=homogeneous                   depth=1000                           
+Atm             ATM_type=non      depth=100     direction=0  Attenuation=off
+Receiver        Rec_alt=-1100
 
 # Specifications:
 # 1.MAKE SURE THAT THERE IS AN EMPTY LINE AFTER THE LAST INPUT PARAMETERS!

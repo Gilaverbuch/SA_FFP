@@ -90,7 +90,7 @@ def elastic_solver_free():
                     Initial_parameters.z,Initial_parameters.BCtop,Initial_parameters.BCbottom,Initial_parameters.rho
                     ,Initial_parameters.Kmin,Initial_parameters.Kmax,Initial_parameters.dK,Initial_parameters.earth_interface,
                     Initial_parameters.Earth_depth,Initial_parameters.Ocean_depth,Initial_parameters.Atm_depth,Initial_parameters.Fname,
-                    Initial_parameters.delta_Kp, Initial_parameters.delta_Ks)
+                    Initial_parameters.delta_Kp, Initial_parameters.delta_Ks, Initial_parameters.atm_atten_profile)
 
 
     print ("Go to range")
@@ -146,6 +146,7 @@ def elastic_solver_free():
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P2[Initial_parameters.earth_interface-pos,:])/(4*pi)),'g',linewidth=3,label='FFP-elastic')
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P_exact[pos,:])/(4*pi)),'b',linewidth=1,label='Exact')
     plt.xlim([0,100])
+    plt.title('Elastic free surface')
     plt.legend()
     plt.show()
 
@@ -206,6 +207,7 @@ def acoustic_solver_toy():
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P[pos,:])/(1)),'r',linewidth=2,label='FFP')
     plt.plot(Jelle_range,Jelle_tl,'b',linewidth=1,label='NM')
     plt.xlim([0,1000])
+    plt.title('Acoustic toy profile')
     plt.legend()
     plt.show()
 
@@ -256,6 +258,7 @@ def acoustic_solver_N2():
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P[pos,:])/(1)),'r',linewidth=2,label='FFP')
     plt.plot(n2_range,n2_tl,'b',linewidth=1,label='Exact')
     plt.xlim([0,1000])
+    plt.title('Acoustic N^2')
     plt.legend()
     plt.show()
 
@@ -308,6 +311,7 @@ def acoustic_solver_rigid():
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P[pos+Initial_parameters.earth_interface,:])/(4*pi)),'r',linewidth=2,label='FFP')
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P_exact[pos,:])/(4*pi)),'b',linewidth=1,label='Exact')
     plt.xlim([0,20])
+    plt.title('Acoustic rigid surface')
     plt.legend()
     plt.show()
 
@@ -363,6 +367,7 @@ def acoustic_solver_free():
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P[pos,:])/(4*pi)),'r',linewidth=2,label='FFP')
     plt.plot(Initial_parameters.r/1000,20*np.log10(np.abs(P_exact[pos,:])/(4*pi)),'b',linewidth=1,label='Exact')
     plt.xlim([0,20])
+    plt.title('Acoustic free surface')
     plt.legend()
     plt.show()
 
