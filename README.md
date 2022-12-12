@@ -29,3 +29,7 @@ Specifications for input file:
 111. Atm gets type=homogeneous/linear/file_name/non/N2/. If type=non -> depth=0. for homogeneous c=330. if type=file name -> direction indicates the direction of propagation. If type=linear direction->dcdz=slope
 
 12. Toy profile= soundspeed_east_strat.dat
+
+For citations, please use:
+
+Averbuch, G., Assink, J. D., and Evers, L. G. (2020a). “Long-range atmospheric infrasound propagation from subsurface sources,” The Journal of the Acoustical Society of America 147(2), 1264–1274, doi: mu10.1121/10.0000792.
