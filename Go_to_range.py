@@ -33,7 +33,7 @@ def go_to_range(G,cylin_spred,r,dK,wavenumbers,K,layers,kmin,kmax,rho,omega,eps)
     pos2=wavenumbers-1
     while np.real(K[pos2])>=kmax:
             pos2=pos2-1;
-    wind = signal.tukey(pos2-pos1)
+    wind = signal.windows.tukey(pos2-pos1)
     aa[pos1:pos2]=wind
 
     temp3=np.sqrt(K[:])*np.exp(1j*r[0]*dK*l[:])
@@ -66,7 +66,7 @@ def go_to_range_acoustic(G_p,G_w,cylin_spred,r,dK,wavenumbers,K,layers,kmin,kmax
     pos2=wavenumbers-1
     while np.real(K[pos2])>=kmax:
             pos2=pos2-1;
-    wind = signal.tukey(pos2-pos1)
+    wind = signal.windows.tukey(pos2-pos1)
     aa[pos1:pos2]=wind
 
     temp3=np.sqrt(K[:])*np.exp(1j*r[0]*dK*l[:])
