@@ -421,7 +421,7 @@ def get_exact_greens_acoustic_rigid(K,vel,layers,earth_interface,wavenumbers,ome
     while np.real(K[pos2])>=kmax:
             pos2=pos2-1;
 
-    wind = signal.tukey(pos2-pos1)
+    wind = signal.windows.tukey(pos2-pos1)
     aa[pos1:pos2]=wind
     
     for i in range(0,layers):
@@ -475,7 +475,7 @@ def get_exact_greens_acoustic_free(K,vel,layers,earth_interface,wavenumbers,omeg
     while np.real(K[pos2])>=kmax:
             pos2=pos2-1;
 
-    wind = signal.tukey(pos2-pos1)
+    wind = signal.windows.tukey(pos2-pos1)
     aa[pos1:pos2]=wind
     
     for i in range(0,layers):
@@ -553,7 +553,7 @@ def get_exact_greens_elastic_free(K,Vp,Vs,layers,earth_interface,wavenumbers,ome
     while np.real(K[pos2])>=kmax:
             pos2=pos2-1;
 
-    wind = signal.tukey(pos2-pos1)
+    wind = signal.windows.tukey(pos2-pos1)
     aa[pos1:pos2]=wind
     
     for i in range(0,layers):
